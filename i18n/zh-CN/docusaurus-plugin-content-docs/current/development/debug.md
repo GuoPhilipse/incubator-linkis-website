@@ -1,6 +1,6 @@
 ---
-title: 调试指引
-sidebar_position: 2
+title: 调试 Debug 指引
+sidebar_position: 6.0
 ---
 
 > 导语：本文详细记录了如何在IDEA中配置和启动Linkis的各个微服务，并实现JDBC、Python、Shell等脚本的提交和执行。在Mac OS上，Linkis的各个微服务都支持本地调试。
@@ -52,6 +52,7 @@ mvn clean install -DskipTests
       <version>${mysql.connector.version}</version>
 </dependency>
 ```
+同时需要留意 根pom.xml的`<dependencyManagement>`中是否将mysql-connector-java依赖的scope设置为test，如是，本地调试时需要注释掉
 
 ### 3.2 调整log4j2.xml配置
 

@@ -42,7 +42,7 @@ hadoop ALL=(ALL) NOPASSWD: NOPASSWD: ALL
 
 ### 2.1 Installation package preparation
 
-- Method 1: From the official website [download address](https://linkis.apache.org/zh-CN/download/main): https://linkis.apache.org/zh-CN/download/main
+- Method 1: From the official website [download address](https://linkis.apache.org/download/main): https://linkis.apache.org/download/main
 , download the corresponding The installation package (project installation package and management console installation package)
 - Method 2: Compile the project installation package and management console according to [Linkis Compile and Package](../development/build) and [Front-end Management Console Compile](../development/build-console) Installation package
 
@@ -182,13 +182,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 LINKIS_HOME=/appcom/Install/LinkisInstall
 ````
-#### Data source service is enabled (optional)
-> According to the actual situation, if you want to use the data source function, you need to adjust
 
-```shell script
-#If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
-export ENABLE_METADATA_QUERY=true
-````
 #### No HDFS mode deployment (optional >1.1.2 version support hold)
 
 > Deploy Linkis services in an environment without HDFS to facilitate more lightweight learning and debugging. Deploying in HDFS mode does not support tasks such as hive/spark/flink engines
@@ -203,7 +197,19 @@ RESULT_SET_ROOT_PATH=file:///tmp/linkis
 export ENABLE_HDFS=false
 export ENABLE_HIVE=false
 export ENABLE_SPARK=false
-````
+```
+
+#### kerberos authentication (optional)
+
+> By default, kerberos authentication is disabled on Linkis. If kerberos authentication is enabled in the hive cluster, you need to set the following parameters:
+
+Modify the `linkis-env.sh` file and modify the following
+
+```bash
+#HADOOP
+HADOOP_KERBEROS_ENABLE=true
+HADOOP_KEYTAB_PATH=/appcom/keytab/
+```
 
 ## 3. Install and start
 
@@ -235,7 +241,7 @@ Because the mysql-connector-java driver is under the GPL2.0 protocol, it does no
 
 :::
 
-To download the mysql driver, take version 5.1.49 as an example: [download link](https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49. jar) https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
+To download the mysql driver, take version 5.1.49 as an example: [download link](https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar)
 
 Copy the mysql driver package to the lib package
 ````
@@ -259,9 +265,7 @@ During installation and deployment, the `YARN_RESTFUL_URL=http://xx.xx.xx.xx:808
 If password authentication is enabled in yarn's ResourceManager, please modify the yarn data information generated in the database table `linkis_cg_rm_external_resource_provider` after installation and deployment.
 For details, please refer to [Check whether the yarn address is configured correctly] (#811-Check whether the yarn address is configured correctly)
 
-
-
-#### 3.3.3 session
+#### 3.3.2 session
 If you are upgrading to Linkis. Deploy DSS or other projects at the same time, but the dependent linkis version introduced in other software is <1.1.1 (mainly in the lib package, the linkis-module-x.x.x.jar package of the dependent Linkis is <1.1.1), you need to modify the linkis located in ` ${LINKIS_HOME}/conf/linkis.properties` file
 ```shell
 echo "wds.linkis.session.ticket.key=bdp-user-ticket-id" >> linkis.properties
@@ -278,8 +282,8 @@ After the installation is complete, if you need to modify the configuration (bec
 
 ### 3.6 Check whether the service starts normally
 Visit the eureka service page (http://eurekaip:20303),
-The 1.x.x version will start 8 Linkis microservices by default, and the linkis-cg-engineconn service in the figure below will be started only for running tasks
-![Linkis1.0_Eureka](/Images/deployment/Linkis1.0_combined_eureka.png)
+The Linkis will start 6 microservices by default, and the linkis-cg-engineconn service in the figure below will be started only for running tasks
+![Linkis1.0_Eureka](./images/eureka.png)
 
 ```shell script
 LINKIS-CG-ENGINECONNMANAGER Engine Management Services
@@ -291,11 +295,8 @@ LINKIS-MG-GATEWAY gateway service
 LINKIS-PS-CS context service
 LINKIS-PS-PUBLICSERVICE Public Service
 ````
-If the data source service function is enabled (not enabled by default), you will see these two services
-```shell script
-LINKIS-PS-DATA-SOURCE-MANAGER
-LINKIS-PS-METADATAMANAGER
-````
+
+Note: Linkis-ps-cs, Linkis-ps-data-source-Manager and Linkis-Ps-Metadatamanager services have been merged into Linkis-Ps-PublicService in Linkis 1.3.1 and merge LINKIS-CG-ENGINECONNMANAGER services into LINKIS-CG-LINKISMANAGER.
 
 If any services are not started, you can view detailed exception logs in the corresponding log/${service name}.log file.
 
@@ -655,5 +656,5 @@ Linkis official website documents are constantly improving, you can view/keyword
 Related blog post links
 - Linkis technical blog collection https://github.com/apache/incubator-linkis/issues/1233
 - Technical blog post on the official account https://mp.weixin.qq.com/mp/homepage?__biz=MzI4MDkxNzUxMg==&hid=1&sn=088cbf2bbed1c80d003c5865bc92ace8&scene=18
-- Official website documentation https://linkis.apache.org/zh-CN/docs/latest/introduction
+- Official website documentation https://linkis.apache.org/docs/latest/introduction
 - bili technology sharing video https://space.bilibili.com/598542776?spm_id_from=333.788.b_765f7570696e666f.2
